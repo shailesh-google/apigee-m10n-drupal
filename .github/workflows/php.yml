@@ -144,7 +144,7 @@ jobs:
         composer show > composer-show.txt
  
     - name: Artifacts
-      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      uses: actions/upload-artifact@1746f4ab65b179e0ea60a494b83293b640dd5bba
       with:
         name: composer-${{ matrix.php-version }}-${{ matrix.drupal-core }}-${{ matrix.instance-type }}-artifact
         path: drupal/composer.*
