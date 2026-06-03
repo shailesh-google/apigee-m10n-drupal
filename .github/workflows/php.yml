@@ -18,7 +18,7 @@ env:
 
 on:
   push:
-  pull_request_target:
+  pull_request:
   schedule:
     - cron: '00 01 * * *'
 
@@ -80,9 +80,8 @@ jobs:
         cd drupal
         echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-    - name: Restore composer dependencies
-      # FIX: Use restore action instead of the standard cache action
-      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+    - name: Cache composer dependencies
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         path: ${{ steps.composercache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -122,14 +121,6 @@ jobs:
         composer config platform.php ${{ matrix.php-version }}
         composer update --with-all-dependencies
         composer require --dev phpspec/prophecy-phpunit:^2
-
-    - name: Save composer dependencies
-      # FIX: Explicitly block 'pull_request_target' events from writing to the cache
-      if: always() && github.event_name != 'pull_request_target'
-      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-      with:
-        path: ${{ steps.composercache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
 
     - name: "PHPCS and setting up Apigee X environment"
       if: ${{ matrix.instance-type == 'X' }}
